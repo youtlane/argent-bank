@@ -1,4 +1,3 @@
-// src/components/Home/Home.jsx
 
 import React, { useEffect, useState } from 'react';
 import FeatureItem from '../components/features/FeatureItem';
