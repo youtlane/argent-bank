@@ -6,7 +6,6 @@ import chatIcon from '../assets/icon-chat.png';
 import moneyIcon from '../assets/icon-money.png';
 import securityIcon from '../assets/icon-security.png';
 
-// Map des noms des icônes aux imports réels
 const iconMap = {
     "icon-chat.png": chatIcon,
     "icon-money.png": moneyIcon,
@@ -36,7 +35,7 @@ const Home = () => {
                 {features.map((feature, index) => (
                     <FeatureItem
                         key={index}
-                        icon={iconMap[feature.icon]} // Utiliser le mapping pour récupérer l'icône
+                        icon={iconMap[feature.icon]}
                         title={feature.title}
                     >
                         {feature.description}
