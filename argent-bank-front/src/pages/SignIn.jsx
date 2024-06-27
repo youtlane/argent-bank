@@ -1,5 +1,4 @@
-// src/pages/SignIn.js
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
@@ -7,26 +6,25 @@ import authService from '../services/authService';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-
 const SignIn = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
-    const { status, error } = useSelector(state => state.auth);
+    const { status } = useSelector(state => state.auth);
+    const [loginError, setLoginError] = useState('');
 
     const handleLogin = async (data) => {
-        // data.preventDefault();
         try {
             await authService.login(data.username, data.password);
             navigate('/user');
         } catch (error) {
-            console.error(error);
+            setLoginError('Les identifiants sont incorrects');
         }
     };
 
     return (  
         <main className="main bg-dark">
             <section className="sign-in-content">
-                <FontAwesomeIcon icon={faUserCircle} className="sign-in-icon" />
+                <FontAwesomeIcon icon={faUserCircle} />
                 <h1>Sign In</h1>
                 <form onSubmit={handleSubmit(handleLogin)}>
                     <div className="input-wrapper">
@@ -53,7 +51,7 @@ const SignIn = () => {
                     </div>
                     <button type="submit" className="sign-in-button">Sign In</button>
                 </form>
-                {status === 'failure' && <p style={{ color: 'red' }}>{error}</p>}
+                {status === 'failure' && <p style={{ color: 'red' }}>{loginError}</p>}
             </section>
         </main>
     );
