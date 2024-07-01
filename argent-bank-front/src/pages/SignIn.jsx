@@ -5,6 +5,8 @@ import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import authService from '../services/authService';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { loginFailure, loginSuccess } from '../redux/authSlice';
+import { store } from '../redux/store';
 
 const SignIn = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -14,9 +16,12 @@ const SignIn = () => {
 
     const handleLogin = async (data) => {
         try {
-            await authService.login(data.username, data.password);
+            const { token, user } = await authService.userLogin(data.username, data.password);
+            // Dispatcher l'action loginSuccess evec le token
+            store.dispatch(loginSuccess({ token, user}));
             navigate('/user');
         } catch (error) {
+            store.dispatch(loginFailure(error.message));
             setLoginError('Les identifiants sont incorrects');
         }
     };

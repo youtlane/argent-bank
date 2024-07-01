@@ -1,36 +1,64 @@
 
 import axios from 'axios';
-import { loginSuccess, loginFailure } from '../redux/authSlice';
 import { store } from '../redux/store';
+import { logout } from '../redux/authSlice';
 
-const API_URL = 'http://localhost:3001/api/v1/user/login';
+const API_URL = 'http://localhost:3001/api/v1';
 
-const login = async (email, password) => {
+const userLogin = async (email, password) => {
     try {
-        const response = await axios.post(API_URL, {
+        const response = await axios.post(API_URL + "/user/login", {
             email,
             password
         });
 
         if (response.data.status === 200) {
             const token = response.data.body.token;
+            let user = await getProfilByToken(token);
+            user = user.body
             // Stocker le token dans le local storage
             localStorage.setItem('token', token);
-            // Dispatcher l'action loginSuccess vec le token
-            store.dispatch(loginSuccess(token));
-            return response.data;
+            localStorage.setItem('user', user.body);
+
+            return { token, user };
         } else {
-            store.dispatch(loginFailure(response.data.message));
             throw new Error(response.data.message);
         }
     } catch (error) {
-        // Dispatcher l'action loginFailure vec le message d err
-        store.dispatch(loginFailure(error.message));
         console.error('Error logging in:', error);
         throw error;
     }
 };
 
-export default {
-    login
+
+const getProfilByToken = async (token) => {
+    try {
+        const response = await axios.post(
+            API_URL + "/user/profile",
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        console.error('Error get user profil:', error);
+        throw error;
+    }
+}
+
+const userLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    store.dispatch(logout());
 };
+
+export default {
+    userLogin,
+    getProfilByToken,
+    userLogout
+};
+
