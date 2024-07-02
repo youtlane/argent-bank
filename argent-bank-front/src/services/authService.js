@@ -16,9 +16,11 @@ const userLogin = async (email, password) => {
             const token = response.data.body.token;
             let user = await getProfilByToken(token);
             user = user.body
+
             // Stocker le token dans le local storage
             localStorage.setItem('token', token);
-            localStorage.setItem('user', user.body);
+            // convertir user en string avant de le stoquer en localStorage
+            localStorage.setItem('user', JSON.stringify(user));
 
             return { token, user };
         } else {
