@@ -113,6 +113,42 @@ paths:
         '500':
           description: Internal Server Error
 
+  /account/{accountId}/transactions:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Transaction Module
+      summary: Get Transactions by Account ID
+      description: Fetch all transactions for an account with an optional month filter
+      parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          description: ID of the account to fetch transactions for
+          required: true
+          type: string
+        - in: query
+          name: month
+          description: Optional month filter for transactions (format YYYY-MM)
+          required: false
+          type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transactions retrieved successfully
+          schema:
+            $ref: '#/definitions/TransactionsResponse'
+        '400':
+          description: Invalid Request
+        '500':
+          description: Internal Server Error
+
   /transaction:
     get:
       security:
@@ -206,8 +242,8 @@ paths:
         - Bearer: []
       tags:
         - Transaction Module
-      summary: Update Transaction
-      description: API for updating a transaction
+      summary: Update Transaction Categories and Notes
+      description: API for updating the categories and notes of a transaction, not the entire transaction
       parameters:
         - in: header
           name: Authorization
@@ -224,12 +260,12 @@ paths:
           description: Update transaction payload
           required: true
           schema:
-            $ref: '#/definitions/TransactionRequest'
+            $ref: '#/definitions/TransactionUpdateRequest'
       produces:
         - application/json
       responses:
         '200':
-          description: Transaction updated successfully
+          description: Transaction categories and notes updated successfully
           schema:
             $ref: '#/definitions/TransactionResponse'
         '400':
@@ -243,8 +279,8 @@ paths:
         - Bearer: []
       tags:
         - Transaction Module
-      summary: Delete Transaction
-      description: API for deleting a transaction
+      summary: Delete Transaction Categories and Notes
+      description: API for deleting the categories and notes of a transaction, not the entire transaction
       parameters:
         - in: header
           name: Authorization
@@ -253,14 +289,14 @@ paths:
           type: string
         - in: path
           name: transactionId
-          description: ID of the transaction to delete
+          description: ID of the transaction to delete categories and notes
           required: true
           type: string
       produces:
         - application/json
       responses:
         '200':
-          description: Transaction deleted successfully
+          description: Categories and notes deleted successfully
           schema:
             type: string
             example: "Votre transaction a été supprimée"
@@ -386,3 +422,12 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Transaction'
+  TransactionUpdateRequest:
+    type: object
+    properties:
+      category:
+        type: array
+        items:
+          type: string
+      notes:
+        type: string
